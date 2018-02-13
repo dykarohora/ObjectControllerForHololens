@@ -1,0 +1,78 @@
+@startuml ObjectController
+
+namespace ObjectController {
+    interface ITransformAdjustable {
+        +void AdjustTransform(Transform target, Vector3 velocity)
+    }
+
+    namespace Adjuster {
+        abstract class BaseAdjuster
+        class PositionAdjuster
+        class RotateAdjuster
+        class ScaleAdjuster
+
+        BaseAdjuster --u|> ObjectController.ITransformAdjustable
+        BaseAdjuster <|-- PositionAdjuster
+        BaseAdjuster <|-- RotateAdjuster
+        BaseAdjuster <|-- ScaleAdjuster
+
+        class AdjusterManager {
+            +ITransformAdjustable CurrentAdjuster
+            +void SetCurrentAdjuster(ButtonType type)
+        }
+
+        AdjusterManager --> BaseAdjuster
+    }
+
+    namespace menu {
+        class MenuButton{
+            +ButtonType type
+            +SetButtonColor()
+        }
+        enum ButtonType{
+            Move
+            Rotate
+            Scale
+            Done
+        }
+        class MenuPresentetor
+
+        MenuPresentetor --> MenuButton
+        MenuPresentetor --> ObjectController.Adjuster.AdjusterManager
+        MenuButton ..> ButtonType
+    }
+
+    namespace BoundingBox {
+
+        class BoundingBoxGenerator {
+            -void GenerateBoundingBox()
+        }
+
+        class BoundingBoxTarget
+        interface IInputClickHandler<MRTK>
+
+        BoundingBoxTarget --r|> IInputClickHandler
+        BoundingBoxTarget --d> ObjectController.ObjectControllerManager
+        BoundingBoxGenerator ..d> ObjectController.ObjectControllerManager
+    }
+
+    interface IManipulationHandler<MRTK>
+    class ManipulationProgressProvider{
+        +BoolReactiveProperty IsManipulating
+        +Vector3 Velocity
+    }
+
+    class ObjectControllerManager {
+        +ReactiveProperty<GameObject> target
+        +void SetTarget(GameObject target)
+    }
+
+    ManipulationProgressProvider --|> IManipulationHandler
+
+    ObjectControllerManager --> ITransformAdjustable
+    ObjectControllerManager ..> ObjectController.Adjuster.AdjusterManager
+    ObjectControllerManager ..l> ManipulationProgressProvider
+
+}
+
+@enduml

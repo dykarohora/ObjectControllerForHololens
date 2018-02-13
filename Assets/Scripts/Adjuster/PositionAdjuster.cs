@@ -1,0 +1,19 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace ObjectController.Adjuster
+{
+    public class PositionAdjuster : BaseAdjuster
+    {
+        [SerializeField]
+        [Range(0.0f, 20.0f)] 
+        private float _moveMultiple = 8.0f;
+
+        public override void AdjustTransform(GameObject target, Vector3 velocity)
+        {
+            target.transform.position += velocity * _moveMultiple;
+            _bbEdges.transform.position += velocity * _moveMultiple;
+        }
+    }
+}
