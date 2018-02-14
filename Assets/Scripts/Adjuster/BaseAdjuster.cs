@@ -1,13 +1,16 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using ObjectController.BoundingBox;
+using UniRx;
 using UnityEngine;
 
 namespace ObjectController.Adjuster
 {
-    public abstract class BaseAdjuster : MonoBehaviour, ITransformAdjustable
+    public abstract class BaseAdjuster : MonoBehaviour, ITransformAdjustable, IReceiveRegenerateBoundingBox
     {
         [SerializeField]
         protected GameObject _bbEdges;
+
+        protected readonly Subject<GameObject> _onRegenerateBoundingBox = new Subject<GameObject>();
+        public IObservable<GameObject> OnRegenerateBoundingBox => _onRegenerateBoundingBox;
 
         [SerializeField]
         protected ManipulationProgressProvider _manipulationProvider;

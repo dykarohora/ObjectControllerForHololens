@@ -1,5 +1,6 @@
 ﻿using HoloToolkit.Unity;
 using ObjectController.Adjuster;
+using ObjectController.Menu;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -8,12 +9,14 @@ namespace ObjectController
 {
     public class ObjectControllerManager : Singleton<ObjectControllerManager>
     {
-        private ReactiveProperty<GameObject> _target = new ReactiveProperty<GameObject>();
+        private readonly ReactiveProperty<GameObject> _target = new ReactiveProperty<GameObject>();
         public IReadOnlyReactiveProperty<GameObject> Target => _target;
 
         [SerializeField]
         private ManipulationProgressProvider _manipulationProvider;
-        
+
+        private ITransformAdjustable _currentAdjuster;
+
         public bool TrySetTarget(GameObject target)
         {
             // TODO:argetが条件を満たすかを確認する
@@ -28,9 +31,12 @@ namespace ObjectController
                 .Subscribe(_ =>
                 {
                     var velocity = _manipulationProvider.SmoothVelocity;
-                    var currentAdjuster = AdjusterManager.Instance.CurrentAdjuster;
-                    currentAdjuster.AdjustTransform(_target.Value, velocity);
+                    _currentAdjuster?.AdjustTransform(_target.Value, velocity);
                 });
+
+            AdjusterManager.Instance.CurrentState
+                .Subscribe(_ => _currentAdjuster = AdjusterManager.Instance.CurrentAdjuster)
+                .AddTo(gameObject);
         }
     }
 

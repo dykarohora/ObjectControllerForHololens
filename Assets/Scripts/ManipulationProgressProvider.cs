@@ -33,13 +33,22 @@ namespace ObjectController
         public void OnManipulationCompleted(ManipulationEventData eventData)
         {
             _isManipulating.Value = false;
+            ResetVectors();
             InputManager.Instance.PopModalInputHandler();
         }
 
         public void OnManipulationCanceled(ManipulationEventData eventData)
         {
             _isManipulating.Value = false;
+            ResetVectors();
             InputManager.Instance.PopModalInputHandler();
+        }
+
+        private void ResetVectors()
+        {
+            _lastNavigatePos = Vector3.zero;
+            _navigateVelocity = Vector3.zero;
+            SmoothVelocity = Vector3.zero;
         }
     }
 }

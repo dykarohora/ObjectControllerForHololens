@@ -35,13 +35,21 @@ namespace ObjectController.BoundingBox
                     }
                 })
                 .AddTo(gameObject);
+
+            var notifiers = GetComponents<IReceiveRegenerateBoundingBox>();
+            foreach (var notifier in notifiers)
+            {
+                notifier.OnRegenerateBoundingBox
+                    .Subscribe(target => GenerateBoundingBox(target))
+                    .AddTo(gameObject);
+            }
         }
         private void GenerateBoundingBox(GameObject target)
         {
             // 後で書く
             _boundsPoints.Clear();
-            
-            // とりあえずMeshFilterで計算してみる
+
+            // MeshFilte
             var meshFilters = target.GetComponentsInChildren<MeshFilter>();
             for (var i = 0; i < meshFilters.Length; i++)
             {
@@ -53,6 +61,20 @@ namespace ObjectController.BoundingBox
 
                 var meshBounds = meshFilterObj.sharedMesh.bounds;
                 meshBounds.GetCornerPositions(meshFilterObj.transform, ref _corners);
+                _boundsPoints.AddRange(_corners);
+            }
+
+            // Renderer
+            var renderers = target.GetComponentsInChildren<Renderer>();
+            for (var i = 0; i < renderers.Length; i++)
+            {
+                var rendererObj = renderers[i];
+                if (rendererObj.gameObject.layer == _ignoreLayer)
+                {
+                    continue;
+                }
+
+                rendererObj.bounds.GetCornerPositionsFromRendererBounds(ref _corners);
                 _boundsPoints.AddRange(_corners);
             }
 
@@ -129,6 +151,33 @@ namespace ObjectController.BoundingBox
             positions[BoundsExtentions.RBB] = transform.TransformPoint(rightEdge, bottomEdge, backEdge);
             positions[BoundsExtentions.RTF] = transform.TransformPoint(rightEdge, topEdge, frontEdge);
             positions[BoundsExtentions.RTB] = transform.TransformPoint(rightEdge, topEdge, backEdge);
+        }
+
+        public static void GetCornerPositionsFromRendererBounds(this Bounds bounds, ref Vector3[] positions)
+        {
+            var center = bounds.center;
+            var extents = bounds.extents;
+            var leftEdge = center.x - extents.x;
+            var rightEdge = center.x + extents.x;
+            var bottomEdge = center.y - extents.y;
+            var topEdge = center.y + extents.y;
+            var frontEdge = center.z - extents.z;
+            var backEdge = center.z + extents.z;
+
+            const int numPoints = 8;
+            if (positions == null || positions.Length != numPoints)
+            {
+                positions = new Vector3[numPoints];
+            }
+
+            positions[BoundsExtentions.LBF] = new Vector3(leftEdge, bottomEdge, frontEdge);
+            positions[BoundsExtentions.LBB] = new Vector3(leftEdge, bottomEdge, backEdge);
+            positions[BoundsExtentions.LTF] = new Vector3(leftEdge, topEdge, frontEdge);
+            positions[BoundsExtentions.LTB] = new Vector3(leftEdge, topEdge, backEdge);
+            positions[BoundsExtentions.RBF] = new Vector3(rightEdge, bottomEdge, frontEdge);
+            positions[BoundsExtentions.RBB] = new Vector3(rightEdge, bottomEdge, backEdge);
+            positions[BoundsExtentions.RTF] = new Vector3(rightEdge, topEdge, frontEdge);
+            positions[BoundsExtentions.RTB] = new Vector3(rightEdge, topEdge, backEdge);
         }
     }
 }

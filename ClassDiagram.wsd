@@ -11,13 +11,14 @@ namespace ObjectController {
         class RotateAdjuster
         class ScaleAdjuster
 
-        BaseAdjuster --u|> ObjectController.ITransformAdjustable
+        BaseAdjuster --|> ObjectController.ITransformAdjustable
         BaseAdjuster <|-- PositionAdjuster
         BaseAdjuster <|-- RotateAdjuster
         BaseAdjuster <|-- ScaleAdjuster
 
         class AdjusterManager {
             +ITransformAdjustable CurrentAdjuster
+            +IReadonlyReactiveProperty<ControllerButtonType> CurrentState
             +void SetCurrentAdjuster(ButtonType type)
         }
 
@@ -26,10 +27,10 @@ namespace ObjectController {
 
     namespace menu {
         class MenuButton{
-            +ButtonType type
+            +ControllerButtonType type
             +SetButtonColor()
         }
-        enum ButtonType{
+        enum ControllerButtonType{
             Move
             Rotate
             Scale
@@ -39,7 +40,7 @@ namespace ObjectController {
 
         MenuPresentetor --> MenuButton
         MenuPresentetor --> ObjectController.Adjuster.AdjusterManager
-        MenuButton ..> ButtonType
+        MenuButton ..> ControllerButtonType
     }
 
     namespace BoundingBox {
@@ -48,12 +49,17 @@ namespace ObjectController {
             -void GenerateBoundingBox()
         }
 
+        interface IReceiveRegenerateNotification {
+            +IObservable<Unit> OnRegenerateBoundingBox
+        }
+
         class BoundingBoxTarget
         interface IInputClickHandler<MRTK>
 
-        BoundingBoxTarget --r|> IInputClickHandler
-        BoundingBoxTarget --d> ObjectController.ObjectControllerManager
-        BoundingBoxGenerator ..d> ObjectController.ObjectControllerManager
+        BoundingBoxTarget --|> IInputClickHandler
+        BoundingBoxTarget --> ObjectController.ObjectControllerManager
+        BoundingBoxGenerator ..> ObjectController.ObjectControllerManager
+        BoundingBoxGenerator --> IReceiveRegenerateNotification
     }
 
     interface IManipulationHandler<MRTK>
@@ -71,7 +77,7 @@ namespace ObjectController {
 
     ObjectControllerManager --> ITransformAdjustable
     ObjectControllerManager ..> ObjectController.Adjuster.AdjusterManager
-    ObjectControllerManager ..l> ManipulationProgressProvider
+    ObjectControllerManager ..> ManipulationProgressProvider
 
 }
 
