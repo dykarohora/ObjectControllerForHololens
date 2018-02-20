@@ -12,10 +12,14 @@ namespace ObjectController.Adjuster
         protected readonly Subject<GameObject> _onRegenerateBoundingBox = new Subject<GameObject>();
         public IObservable<GameObject> OnRegenerateBoundingBox => _onRegenerateBoundingBox;
 
-        [SerializeField]
-        protected ManipulationProgressProvider _manipulationProvider;
+        protected IInputEventProvider _manipulationProvider;
 
         public abstract void AdjustTransform(GameObject target, Vector3 velocity);
+
+        protected void GetInputEventProvider()
+        {
+            _manipulationProvider = GetComponent<IInputEventProvider>();
+        }
     }
 }
 

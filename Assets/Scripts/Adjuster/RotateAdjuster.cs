@@ -9,6 +9,8 @@ namespace ObjectController.Adjuster
 
         private void Start()
         {
+            GetInputEventProvider();
+
             _manipulationProvider.IsManipulating
                 .Where(isManipulating => isManipulating)
                 .Subscribe(isManipulating =>

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace ObjectController
 {
-    public class ManipulationProgressProvider : MonoBehaviour, IManipulationHandler
+    public class ManipulationProgressProvider : MonoBehaviour, IManipulationHandler, IInputEventProvider
     {
         private readonly BoolReactiveProperty _isManipulating = new BoolReactiveProperty(false);
         public IReadOnlyReactiveProperty<bool> IsManipulating => _isManipulating;

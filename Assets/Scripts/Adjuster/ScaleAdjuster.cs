@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using HoloToolkit.Unity.InputModule;
+﻿using HoloToolkit.Unity.InputModule;
 using UniRx;
 using UnityEngine;
 
@@ -16,6 +14,8 @@ namespace ObjectController.Adjuster
 
         private void Start()
         {
+            GetInputEventProvider();
+
             _manipulationProvider.IsManipulating
                 .Where(isManipulationg => isManipulationg)
                 .Subscribe(isManipulating =>

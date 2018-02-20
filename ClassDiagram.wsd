@@ -60,9 +60,15 @@ namespace ObjectController {
         BoundingBoxTarget --> ObjectController.ObjectControllerManager
         BoundingBoxGenerator ..> ObjectController.ObjectControllerManager
         BoundingBoxGenerator --> IReceiveRegenerateNotification
+
+        IReceiveRegenerateNotification <|-- ObjectController.Adjuster.BaseAdjuster
     }
 
     interface IManipulationHandler<MRTK>
+    interface IInputEventProvider{
+        IReadonlyReactiveProperty<bool> IsManipulating
+        +Vector3 Velocity
+    }
     class ManipulationProgressProvider{
         +BoolReactiveProperty IsManipulating
         +Vector3 Velocity

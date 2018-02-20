@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace ObjectController.Adjuster
 {
@@ -9,6 +7,11 @@ namespace ObjectController.Adjuster
         [SerializeField]
         [Range(0.0f, 20.0f)] 
         private float _moveMultiple = 8.0f;
+
+        private void Start()
+        {
+            GetInputEventProvider();
+        }
 
         public override void AdjustTransform(GameObject target, Vector3 velocity)
         {
