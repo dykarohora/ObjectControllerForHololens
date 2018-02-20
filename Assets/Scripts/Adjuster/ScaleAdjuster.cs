@@ -16,6 +16,7 @@ namespace ObjectController.Adjuster
         {
             GetInputEventProvider();
 
+            // マニピュレーション開始時に左右どちらに動かすと大きくするのかを決める
             _manipulationProvider.IsManipulating
                 .Where(isManipulationg => isManipulationg)
                 .Subscribe(isManipulating =>
@@ -28,6 +29,8 @@ namespace ObjectController.Adjuster
                 .AddTo(gameObject);
         }
 
+        // 拡大量の計算と反映
+        // Managerからコール
         public override void AdjustTransform(GameObject target, Vector3 velocity)
         {
             var dragAmount = velocity.x;
@@ -38,7 +41,8 @@ namespace ObjectController.Adjuster
 
             target.transform.localScale += Vector3.one * (dragAmount * _scaleMultiple);
             _bbEdges.transform.localScale += Vector3.one * (dragAmount * _scaleMultiple);
-            // boundsの再生成？？
+
+            // BoundingBoxの再生成依頼を発火
             _onRegenerateBoundingBox.OnNext(target);
         }
     }

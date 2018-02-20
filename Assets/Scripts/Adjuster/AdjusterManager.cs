@@ -27,6 +27,7 @@ namespace ObjectController.Adjuster
             CurrentAdjuster = _positionAdjuster;
         }
 
+        // UIのPresentetor層からコールされるモデルのロジック
         public void SetCurrentAdjuster(ControllerButtonType type)
         {
             switch (type)

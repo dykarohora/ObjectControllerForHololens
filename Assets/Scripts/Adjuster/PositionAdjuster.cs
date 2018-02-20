@@ -13,6 +13,8 @@ namespace ObjectController.Adjuster
             GetInputEventProvider();
         }
 
+        // 移動量の計算と反映
+        // Managerからコールされる
         public override void AdjustTransform(GameObject target, Vector3 velocity)
         {
             target.transform.position += velocity * _moveMultiple;

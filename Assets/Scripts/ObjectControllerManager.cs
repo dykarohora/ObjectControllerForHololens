@@ -15,11 +15,14 @@ namespace ObjectController
         [SerializeField]
         private ManipulationProgressProvider _manipulationProvider;
 
+        [SerializeField]
+        private GameObject _bbEdges;
+
         private ITransformAdjustable _currentAdjuster;
 
         public bool TrySetTarget(GameObject target)
         {
-            // TODO:argetが条件を満たすかを確認する
+            // TODO:targetが条件を満たすかを確認する
             _target.Value = target;
             return true;
         }
@@ -36,6 +39,11 @@ namespace ObjectController
 
             AdjusterManager.Instance.CurrentState
                 .Subscribe(_ => _currentAdjuster = AdjusterManager.Instance.CurrentAdjuster)
+                .AddTo(gameObject);
+
+            AdjusterManager.Instance.CurrentState
+                .Where(state => state == ControllerButtonType.Done)
+                .Subscribe(_ => _bbEdges.transform.localScale = Vector3.zero)
                 .AddTo(gameObject);
         }
     }

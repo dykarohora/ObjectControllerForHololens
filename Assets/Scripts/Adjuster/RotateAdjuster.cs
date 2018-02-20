@@ -11,6 +11,7 @@ namespace ObjectController.Adjuster
         {
             GetInputEventProvider();
 
+            // マニピュレーション開始時に回転軸を決めておく
             _manipulationProvider.IsManipulating
                 .Where(isManipulating => isManipulating)
                 .Subscribe(isManipulating =>
@@ -21,6 +22,8 @@ namespace ObjectController.Adjuster
                 .AddTo(gameObject);
         }
 
+        // 回転量の計算と反映
+        // Managerからコールされる
         public override void AdjustTransform(GameObject target, Vector3 velocity)
         {
             var projectionVect = Vector3.Project(velocity, _orthogonalVect);

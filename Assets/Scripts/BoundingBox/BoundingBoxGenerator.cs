@@ -26,6 +26,7 @@ namespace ObjectController.BoundingBox
 
         private void Start()
         {
+            // ターゲットが変更されたタイミングでBoundingBoxを生成する
             ObjectControllerManager.Instance.Target
                 .Subscribe(target =>
                 {
@@ -36,20 +37,22 @@ namespace ObjectController.BoundingBox
                 })
                 .AddTo(gameObject);
 
+            // BoundingBoxの再生成イベントをサブスクライブ
             var notifiers = GetComponents<IReceiveRegenerateBoundingBox>();
             foreach (var notifier in notifiers)
             {
                 notifier.OnRegenerateBoundingBox
-                    .Subscribe(target => GenerateBoundingBox(target))
+                    .Subscribe(GenerateBoundingBox)
                     .AddTo(gameObject);
             }
         }
+
+        // BoundingBoxの生成メソッド
         private void GenerateBoundingBox(GameObject target)
         {
-            // 後で書く
             _boundsPoints.Clear();
 
-            // MeshFilte
+            // MeshFilteから計算
             var meshFilters = target.GetComponentsInChildren<MeshFilter>();
             for (var i = 0; i < meshFilters.Length; i++)
             {
@@ -64,7 +67,7 @@ namespace ObjectController.BoundingBox
                 _boundsPoints.AddRange(_corners);
             }
 
-            // Renderer
+            // Rendererから計算（SkinedMeshRenderer対応）
             var renderers = target.GetComponentsInChildren<Renderer>();
             for (var i = 0; i < renderers.Length; i++)
             {
@@ -112,6 +115,7 @@ namespace ObjectController.BoundingBox
         }
     }
 
+    // Boundsのメソッド拡張
     public static class BoundsExtentions
     {
         // Corners

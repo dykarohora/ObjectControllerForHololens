@@ -15,6 +15,7 @@ namespace ObjectController {
         BaseAdjuster <|-- PositionAdjuster
         BaseAdjuster <|-- RotateAdjuster
         BaseAdjuster <|-- ScaleAdjuster
+        BaseAdjuster --> ObjectController.IInputEventProvider
 
         class AdjusterManager {
             +ITransformAdjustable CurrentAdjuster
@@ -79,8 +80,8 @@ namespace ObjectController {
         +void SetTarget(GameObject target)
     }
 
-    ManipulationProgressProvider --|> IManipulationHandler
-
+    ManipulationProgressProvider --l|> IManipulationHandler
+    ManipulationProgressProvider --|> IInputEventProvider
     ObjectControllerManager --> ITransformAdjustable
     ObjectControllerManager ..> ObjectController.Adjuster.AdjusterManager
     ObjectControllerManager ..> ManipulationProgressProvider

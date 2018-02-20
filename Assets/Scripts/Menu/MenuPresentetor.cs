@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using ObjectController.Adjuster;
+﻿using ObjectController.Adjuster;
 using UniRx;
 using UnityEngine;
 
@@ -12,6 +10,7 @@ namespace ObjectController.Menu
         {
             var buttons = GetComponentsInChildren<MenuButton>();
 
+            // ボタンのクリックイベントをサブスクライブ
             foreach (var button in buttons)
             {
                 button.OnClickeAsObservable
@@ -22,6 +21,7 @@ namespace ObjectController.Menu
                     .AddTo(gameObject);
             }
 
+            // Adjusterのステート変更イベントをサブスクライブ
             AdjusterManager.Instance.CurrentState
                 .Subscribe(state =>
                 {

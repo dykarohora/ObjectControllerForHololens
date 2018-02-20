@@ -15,7 +15,7 @@ namespace ObjectController
 
         public void OnManipulationStarted(ManipulationEventData eventData)
         {
-            _isManipulating.Value = true;
+            _isManipulating.Value = true;   // イベント発火
             InputManager.Instance.PushModalInputHandler(gameObject);
         }
 
@@ -32,14 +32,14 @@ namespace ObjectController
 
         public void OnManipulationCompleted(ManipulationEventData eventData)
         {
-            _isManipulating.Value = false;
+            _isManipulating.Value = false;  // イベント発火
             ResetVectors();
             InputManager.Instance.PopModalInputHandler();
         }
 
         public void OnManipulationCanceled(ManipulationEventData eventData)
         {
-            _isManipulating.Value = false;
+            _isManipulating.Value = false;  // イベント発火
             ResetVectors();
             InputManager.Instance.PopModalInputHandler();
         }
